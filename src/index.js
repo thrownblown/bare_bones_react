@@ -65,7 +65,7 @@ const login_form = (
 	  <Form.Group controlId="formBasicChecbox">
 	    <Form.Check type="checkbox" label="Check me out" />
 	  </Form.Group>
-	  <Button variant="primary" type="submit" className="pull-rigt">
+	  <Button variant="primary" type="button" className="pull-rigt">
 	    Submit
 	  </Button>
 	</Form>
@@ -99,3 +99,13 @@ ReactDOM.render(
     login_form,
     document.getElementById('board')
 );
+
+let oauthtest = fetch("http://localhost:8000/api/oauth2/token/", {
+    body: "grant_type=password&username=thrownblown&password=nickmarzu0",
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": "Basic " + btoa('v5VecbfBCGsTv7dmc2ofUn8PCPd1pNMsuYyeCnmu:Z3Gv0ZaQ3wKLGhAApcahFwRjQf2Bu3E0YrXDwERHPK9WNfImrRJuiPRSnRDuowjMhxFRArAdwvtaUB3oPxA0hyVdATx0rTsRPcMRKUrgF6tC2Uc2r6OsPONq6BMaMBfW')
+    },
+    method: "post",
+}).then((response) => response.json()).then((responseJson) => {
+ console.log(responseJson); })
