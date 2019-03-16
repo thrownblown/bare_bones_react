@@ -9,17 +9,19 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
+import logo from './img/tj_logo.png'; // with import
+
 
 const TJ_APP_KEY = 'XgxsVrC19N9t2a5LdD0Ask9Y4dCBReDRMXHtioCf';
 const TJ_APP_SECRET = 'xCxElvOFdmNZDNYnLio5zFb4ybSKqDbBwrRhs9m6MdvsnqL6DuH6sidYQubmSmNDmyNblsf2hWqYYczJwmjZwZrZRGednyM3EoZdvvX31hSvgQngfgfo84MFV5YrbRvG';
 
 const top_nav = (
   <Navbar bg="dark" variant="dark" fixed="top" >
-    <Navbar.Brand href="#home">TJ</Navbar.Brand>
+    <Navbar.Brand href="#home"><img src={logo} /></Navbar.Brand>
     <Nav className="mr-auto">
-      <Nav.Link href="#home">My Jobs</Nav.Link>
-      <Nav.Link href="#features">All Jobs</Nav.Link>
-      <Nav.Link href="#pricing">Unassigned</Nav.Link>
+      <Nav.Link href="#myjobs">My Jobs</Nav.Link>
+      <Nav.Link href="#alljobs">All Jobs</Nav.Link>
+      <Nav.Link href="#unassigned">Unassigned</Nav.Link>
     </Nav>
   </Navbar>
 );
@@ -28,9 +30,9 @@ const bottom_nav = (
   <Navbar bg="light" variant="light" fixed="bottom" >
     <Navbar.Brand href="#home">TJ</Navbar.Brand>
     <Nav className="mr-auto">
-      <Nav.Link href="#home">My Jobs</Nav.Link>
-      <Nav.Link href="#features">All Jobs</Nav.Link>
-      <Nav.Link href="#pricing">Unassigned</Nav.Link>
+      <Nav.Link href="#myjobs">My Jobs</Nav.Link>
+      <Nav.Link href="#alljobs">All Jobs</Nav.Link>
+      <Nav.Link href="#unassigned">Unassigned</Nav.Link>
     </Nav>
   </Navbar>
 );
@@ -70,35 +72,27 @@ class SignUpForm extends React.Component {
   handleSubmit = (e) => {
     e.preventDefault();
     const { email, password } = this.state;
-    // alert(`Signed up with email: ${email} password: ${password}`);
     login_oauth(email, password);
 
   };
 
   render() {
     return (
-  <Form  onSubmit={this.handleSubmit}>
-    <Form.Group controlId="formBasicEmail">
-      <Form.Label>TwinJet Login</Form.Label>
-      <Form.Control type="text" placeholder="Enter Username/Email" 
+  <Form onSubmit={this.handleSubmit}>
+    <Form.Group controlId="formBasicEmail" className="justify-content-center text-center">
+      <Form.Label >TwinJet Login</Form.Label>
+      <Form.Control type="text" placeholder="Username or Email" 
         value={this.state.email}
         onChange={this.handleEmailChange}
       />
-      <Form.Text className="text-muted">
-      somthin jazzy
-      </Form.Text>
     </Form.Group>
-
     <Form.Group controlId="formBasicPassword">
-      <Form.Label>Password</Form.Label>
       <Form.Control type="password" placeholder="Password" 
           value={this.state.password}
           onChange={this.handlePasswordChange}
       />
     </Form.Group>
-    <Form.Group controlId="formBasicChecbox">
-      <Form.Check type="checkbox" label="Check me out" />
-    </Form.Group>
+
     <Button variant="primary" type="submit" className="pull-rigt" id="login-submit">
       Submit
     </Button>
@@ -134,7 +128,6 @@ ReactDOM.render(
 function login_oauth(email, password) {
   let body = `grant_type=password&username=${email}&password=${password}`;
   let client_cred = btoa(`${TJ_APP_KEY}:${TJ_APP_SECRET}`)
-  console.log(body);
   fetch("https://twinjet.co/api/oauth2/token/", {
     body: body,
     headers: {
@@ -146,6 +139,10 @@ function login_oauth(email, password) {
   .then((response) => response.json())
   .then((responseJson) => {
     console.log(responseJson);
+    for (let item in responseJson) {
+      localStorage['tj_id-' + item] = responseJson[item]
+    }
+    console.log(localStorage)
   })
 }
 
