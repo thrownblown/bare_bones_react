@@ -9,7 +9,8 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import logo from './img/tj_logo.png'; // with import
+import logo from './img/tj_logo.png';
+import tile from './img/light_logo.png';
 
 
 const TJ_APP_KEY = 'XgxsVrC19N9t2a5LdD0Ask9Y4dCBReDRMXHtioCf';
@@ -17,7 +18,9 @@ const TJ_APP_SECRET = 'xCxElvOFdmNZDNYnLio5zFb4ybSKqDbBwrRhs9m6MdvsnqL6DuH6sidYQ
 
 const top_nav = (
   <Navbar bg="dark" variant="dark" fixed="top" >
-    <Navbar.Brand href="#home"><img src={logo} /></Navbar.Brand>
+    <Navbar.Brand href="#home">
+      <img src={logo} className="logo-image" width="131px" height="31px"/>
+    </Navbar.Brand>
     <Nav className="mr-auto">
       <Nav.Link href="#myjobs">My Jobs</Nav.Link>
       <Nav.Link href="#alljobs">All Jobs</Nav.Link>
@@ -38,26 +41,27 @@ const bottom_nav = (
 );
 
 
-const conty = (
+const main_container = (
   <Container className="h-100">
     <Row className="h-100">
-      <Col id="mid" className="my-auto"></Col>
+      <Col id="mid" className="my-auto">
+        <Jumbotron>
+          <div id="board">
+          </div>
+        </Jumbotron>
+      </Col>
     </Row>
   </Container>
 );
 
-const jumb = (
-  <Jumbotron>
-    <div id="board"></div>
-  </Jumbotron>
-);
 
-class SignUpForm extends React.Component {
+class LoginForm extends React.Component {
   constructor() {
     super();
     this.state = {
       email: "",
-      password: ""
+      password: "",
+      isLoading: false
     };
   }
 
@@ -71,7 +75,10 @@ class SignUpForm extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { email, password } = this.state;
+    this.setState(state => ({
+      isLoading: !state.isLoading
+    }));
+    const { email, password, isLoading } = this.state;
     login_oauth(email, password);
 
   };
@@ -80,6 +87,8 @@ class SignUpForm extends React.Component {
     return (
   <Form onSubmit={this.handleSubmit}>
     <Form.Group controlId="formBasicEmail" className="justify-content-center text-center">
+      <img src={tile} height="72" width="72"  />
+      <br />
       <Form.Label >TwinJet Login</Form.Label>
       <Form.Control type="text" placeholder="Username or Email" 
         value={this.state.email}
@@ -92,36 +101,52 @@ class SignUpForm extends React.Component {
           onChange={this.handlePasswordChange}
       />
     </Form.Group>
-
-    <Button variant="primary" type="submit" className="pull-rigt" id="login-submit">
-      Submit
-    </Button>
+    <LoadingButton isLoading={this.state.isLoading} />
   </Form>
     );
   }
 }
 
+function simulateNetworkRequest() {
+  return new Promise(resolve => setTimeout(resolve, 2000));
+}
+
+class LoadingButton extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+  }
+
+  render() {
+
+    return (
+      <Button
+        variant="dark"
+        type="submit"
+        disabled={this.props.isLoading}
+      >
+        {this.props.isLoading ? 'Hang Tight...' : 'Login'}
+      </Button>
+    );
+  }
+}
 
 ReactDOM.render(
     top_nav,
     document.getElementById('top_nav')
 );
+
 ReactDOM.render(
     bottom_nav,
     document.getElementById('bottom_nav')
 );
+
 ReactDOM.render(
-    conty,
+    main_container,
     document.getElementById('root')
 );
 
 ReactDOM.render(
-    jumb,
-    document.getElementById('mid')
-);
-
-ReactDOM.render(
-    <SignUpForm />,
+    <LoginForm />,
     document.getElementById('board')
 );
 
@@ -145,21 +170,3 @@ function login_oauth(email, password) {
     console.log(localStorage)
   })
 }
-
-const CLIENT_ID = 'G0LoROgS6U8jBg0NGeCogtt2jE3Lx6oIoyexCGQo';
-const CLIENT_SECRET = 'zwFDzisOT4kscnYBDg67SMMiHFLEYecZowvWTY4nFcoO62rHMZjEblEP0sEbun8ePBIzyQSnMfOhGp5r7CgaW2G3SIMGrNHyTRJ2gfh4smpmeE6mZtitBwONELnZS3Nf';
-
-
-
-
-let client_cred = btoa(`${CLIENT_ID}:${CLIENT_SECRET}`);
-
-let oauthtest = fetch("http://localhost:8000/api/oauth2/token/", {
-  body: "grant_type=password&username=thrownblown&password=nickmarzu0",
-  headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Authorization": "Basic " + client_cred
-  },
-  method: "post",
-}).then((response) => response.json()).then((responseJson) => {
- console.log(responseJson); })
