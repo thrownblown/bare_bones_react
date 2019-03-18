@@ -9,6 +9,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
+import Collapse from 'react-bootstrap/Collapse';
 import logo from './img/tj_logo.png';
 import tile from './img/light_logo.png';
 
@@ -79,7 +80,12 @@ class LoginForm extends React.Component {
       isLoading: !state.isLoading
     }));
     const { email, password, isLoading } = this.state;
-    login_oauth(email, password);
+    let loggedIn = login_oauth(email, password);
+    if (loggedIn)  {
+      this.setState(state => ({
+        isLoading: false
+      }));
+    }
 
   };
 
@@ -159,7 +165,7 @@ function login_oauth(email, password) {
         "Content-Type": "application/x-www-form-urlencoded",
         "Authorization": "Basic " + client_cred
     },
-    method: "post",
+    method: "post"
   })
   .then((response) => response.json())
   .then((responseJson) => {
@@ -168,5 +174,26 @@ function login_oauth(email, password) {
       localStorage['tj_id-' + item] = responseJson[item]
     }
     console.log(localStorage)
-  })
+    return true;
+  }).then((vale) => {
+    fetch_board_head();
+    return vale;
+  });
+
+}
+
+
+
+function fetch_board_head() {
+  let auth_token = localStorage['tj_id-access_token']
+  fetch("https://twinjet.co/boardapi/v1/jobdeltas/head/", {
+    headers: {
+        "Authorization": "Bearer " + auth_token,
+        "Content-Type": "application/json",
+    },
+    method: "get"
+  }).then((response) => response.json())
+  .then((responseJson) => {
+    console.log(responseJson);
+  });
 }
