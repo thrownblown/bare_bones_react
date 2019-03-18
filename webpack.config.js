@@ -49,5 +49,8 @@ module.exports = {
     extensions: [
       '.js'
     ]
+  },
+  node: {
+    fs: "empty"
   }
 }
