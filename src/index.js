@@ -11,6 +11,10 @@ import Row from 'react-bootstrap/Row';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Collapse from 'react-bootstrap/Collapse';
+import moment from 'moment'
+import Image from 'react-bootstrap/Image'
+
+
 import logo from './img/tj_logo.png';
 import tile from './img/light_logo.png';
 
@@ -40,14 +44,14 @@ function databaseInitialize() {
   return jerbs;
 }
 
-var jerbs = databaseInitialize();
+let jerbs = databaseInitialize();
 
 function ffwdDB(data) {
   jerbs = databaseInitialize();
-    for (var i = data.jobs.length - 1; i >= 0; i--) {
-        var jerb = jerbs.by('id',data.jobs[i].id);
+    for (let i = data.jobs.length - 1; i >= 0; i--) {
+        let jerb = jerbs.by('id',data.jobs[i].id);
         if (jerb){
-            for (var p in data.jobs[i]){
+            for (let p in data.jobs[i]){
                 jerb[p] = data.jobs[i][p];
             }
             jerbs.update(jerb);
@@ -76,6 +80,8 @@ function ffwdDB(data) {
     let timeframe = new Date();
     timeframe.setMinutes(59);
     timeframe.setHours(24);
+    timeframe.setYear(3000);
+
     all_jobs_by_deadline(timeframe)
 }
 
@@ -85,14 +91,14 @@ function ffwdDB(data) {
 function all_jobs_by_deadline(timeframe){
     let currentJobs = [];
     // console.log('all_by_deadline');
-    var jobbers = jerbs.addDynamicView('unassignedByDeadline');
+    let jobbers = jerbs.addDynamicView('unassignedByDeadline');
     jobbers.applyFind({'is_cancelled': false});
     jobbers.applyFind({'status':{'$ne':'Undeliverable'}});
     // if (!showCompleted) {
         jobbers.applyFind({'status':{'$ne':'Completed'}});
     // }
     jobbers.applyFind({'ready_timestamp':{'$lt':timeframe.getTime()}});
-    // jobbers.applySortCriteria(['due_timestamp', 'id']);
+    jobbers.applySortCriteria(['due_timestamp', 'id']);
     currentJobs.push({
         header_count: jobbers.data().length,
         header_id: 'all_by_deadline',
@@ -126,10 +132,16 @@ const top_nav = (
     <Navbar.Brand href="#home">
       <img src={logo} className="logo-image" width="131px" height="31px"/>
     </Navbar.Brand>
-    <Nav className="mr-auto">
-      <Nav.Link href="#myjobs">My Jobs</Nav.Link>
-      <Nav.Link href="#alljobs">All Jobs</Nav.Link>
-      <Nav.Link href="#unassigned">Unassigned</Nav.Link>
+    <Nav className="ml-auto" activeKey="/unassigned">
+      <Nav.Item>
+        <Nav.Link href="/myjobs">My Jobs</Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link href="/alljobs">All Jobs</Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link href="/unassigned">Unassigned</Nav.Link>
+      </Nav.Item>
     </Nav>
   </Navbar>
 );
@@ -237,15 +249,12 @@ const job_container = (
 class JobBucket extends React.Component {
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      jobs : this.props.jobs
-
-    }
+    this.state = this.props;
   }
 
   renderJobCards () {
     return this.state.jobs.map((jerb) => {
-        return <JobCard job={jerb}/>
+        return <JobCard key={jerb.id} job={jerb}/>
       })
   } 
 
@@ -263,15 +272,99 @@ class JobCard extends React.Component {
     super(props, context);
   }
 
+  jobTimeframeString(){
+    const DELIVERY_STATUS_NO_STATUS = -1,
+          DELIVERY_STATUS_NEW = 0,
+          DELIVERY_STATUS_NOT_PICKED = 1,
+          DELIVERY_STATUS_PICKED = 2,
+          DELIVERY_STATUS_STOPS_MADE = 3,
+          DELIVERY_STATUS_DELIVERED = 4,
+          DELIVERY_STATUS_POD_ENTERED = 5,
+          DELIVERY_STATUS_COMPLETE = 6,
+          DELIVERY_STATUS_SIGNED = 7,
+          DELIVERY_STATUS_UNDELIVERABLE = 8,
+          JOB_STATUS_UNDELIVERABLE = 9;
+
+      let timediff,
+          now = new Date();
+
+      if (this.props.job.delivery_status == DELIVERY_STATUS_DELIVERED || this.props.job.delivery_status == DELIVERY_STATUS_COMPLETE) {
+          let drop_time_localized = new Date(this.props.job.drop_timestamp);
+          if (typeof moment != "undefined") {
+              if (drop_time_localized.getDate() == now.getDate()){
+                  return "Delivered " + moment(drop_time_localized).format('h:mm a');
+              } else {
+                  return "Delivered " + moment(drop_time_localized).format('M/D h:mm a');
+              }
+          } else {
+              return "Delivered " + drop_time_localized;
+          }
+
+      } else if (this.props.job.assignment_status == JOB_STATUS_UNDELIVERABLE) {
+          return "Undeliverable";
+      } else if (this.props.job.is_cancelled) {
+          return "Cancelled";
+      }
+
+      let ready_time_localized = new Date(this.props.job.ready_timestamp);
+
+      let due_time_localized = new Date(this.props.job.due_timestamp);
+
+      if (ready_time_localized > now){
+          timediff = ready_time_localized - now;
+          return "Ready in " + moment.duration(timediff).humanize();
+      } else if (due_time_localized > now) {
+          timediff = due_time_localized - now;
+          return "Due in " + moment.duration(timediff).humanize();
+      }
+
+      timediff = now - due_time_localized;
+      return "Due " + moment.duration(timediff).humanize() + " ago";
+  }
+
+  pick_map() { 
+    return 'https://twinjet-static.s3.amazonaws.com/routemaps/' + this.props.job.id + '_pick_map.png';
+  }
+  drop_map() { 
+    return 'https://twinjet-static.s3.amazonaws.com/routemaps/' + this.props.job.id + '_drop_map.png';
+  }
+
+
   render() {
 
+    let fin_info;
+
+    if (this.props.job.payment_method == 1) {
+      fin_info = <span class="text-warning"> {this.props.job.financial_info }</span>
+    } else if (this.props.job.payment_method == 6 || this.props.job.payment_method == 5) { 
+      fin_info = <span class="text-danger"> {this.props.job.financial_info }</span>; 
+    } else if (this.props.job.payment_method == 2 || this.props.job.payment_method == 4 || this.props.job.payment_method == 3 || this.props.job.payment_method == 7) {
+      fin_info = <span class="text-success">  {this.props.job.financial_info }</span>;
+    } 
+
     return (
-      <Row id="">
-        <AddressCard address={this.props.job.origin_address} />
+      <div style={{border: '1px', borderStyle: 'solid', borderColor: 'black', borderRadius: '4px', padding: '10px'}}>
+      <Row>
         <Col>
+          <AddressCard address={this.props.job.origin_address} />
+          <p>
+          <em>{this.props.job.ready_due_times}</em>
+          <br/>
+          {this.jobTimeframeString()}
+          </p>
         </Col>
-        <AddressCard address={this.props.job.destination_address} />
+        <Col>
+        <Image fluid rounded src={this.pick_map()}/>
+        </Col>
+        <Col>
+          <AddressCard address={this.props.job.destination_address} />
+          <p>{fin_info}</p>
+        </Col>
+        <Col>
+        <Image fluid rounded src={this.drop_map()}/>
+        </Col>
       </Row>
+      </div>
     );
   }
 } 
@@ -285,15 +378,12 @@ class AddressCard extends React.Component {
   render() {
 
     return (
-      <Col>
-        <div style={{margin: '5px'}}>
-          {this.props.address.name}<br/>
-          {this.props.address.street_address}<br/>
-          {this.props.address.city} {this.props.address.state} {this.props.address.postal_code}<br/>
-          {this.props.address.contact}<br/>
-          {this.props.address.special_instructions}
-        </div>
-      </Col>
+      <div style={{margin: '5px'}}>
+        <strong>{this.props.address.name}</strong><br/>
+        {this.props.address.street_address}<br/>
+        {this.props.address.city} {this.props.address.state} {this.props.address.postal_code}<br/>
+        {this.props.address.contact}<br/>
+      </div>
     );
   }
 }
@@ -324,7 +414,16 @@ if (localStorage['tj-head']){
         "Content-Type": "application/json",
     },
     method: "get"
-  }).then((response) => response.json(), (err) => {
+  }).then((response) =>{
+    if (response.status >= 400 && response.status < 600) {
+      ReactDOM.render(
+          login_container,
+          document.getElementById('root')
+      );
+    }
+    return response.json();
+
+  }, (err) => {
     console.log(err);
     ReactDOM.render(
         login_container,
