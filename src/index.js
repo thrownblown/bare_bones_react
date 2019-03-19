@@ -15,8 +15,13 @@ import logo from './img/tj_logo.png';
 import tile from './img/light_logo.png';
 
 
-
 const loki = require('lokijs')
+
+const board_stack = (
+  <Container>
+
+  </Container>
+);
 
 let tjdb = new loki('twinjet_db', {
   env: 'BROWSER',
@@ -75,6 +80,8 @@ function ffwdDB(data) {
 }
 
 
+
+
 function all_jobs_by_deadline(timeframe){
     let currentJobs = [];
     // console.log('all_by_deadline');
@@ -93,7 +100,23 @@ function all_jobs_by_deadline(timeframe){
         jobs: jobbers.data()
     });
     console.log(currentJobs);
+    // currentJobs[0].jobs.forEach((jerb) => {
+    //   console.log(jerb);
+    // });
+    let jrbs = currentJobs[0].jobs;
+    const stack = (
+        <Container style={{marginTop:'90px', marginBottom:'90px'}}>
+        <JobBucket jobs={jrbs} />
+        </Container>
+      );
+
+    ReactDOM.render(
+      stack,
+      document.getElementById('root')
+    );
+
 }
+
 
 const TJ_APP_KEY = 'XgxsVrC19N9t2a5LdD0Ask9Y4dCBReDRMXHtioCf';
 const TJ_APP_SECRET = 'xCxElvOFdmNZDNYnLio5zFb4ybSKqDbBwrRhs9m6MdvsnqL6DuH6sidYQubmSmNDmyNblsf2hWqYYczJwmjZwZrZRGednyM3EoZdvvX31hSvgQngfgfo84MFV5YrbRvG';
@@ -111,6 +134,14 @@ const top_nav = (
   </Navbar>
 );
 
+const top_nav_anon = (
+  <Navbar bg="dark" variant="dark" fixed="top" >
+    <Navbar.Brand href="#home">
+      <img src={logo} className="logo-image" width="131px" height="31px"/>
+    </Navbar.Brand>
+  </Navbar>
+);
+
 const bottom_nav = (
   <Navbar bg="light" variant="light" fixed="bottom" >
     <Navbar.Brand href="#home">TJ</Navbar.Brand>
@@ -121,21 +152,6 @@ const bottom_nav = (
     </Nav>
   </Navbar>
 );
-
-
-const main_container = (
-  <Container className="h-100">
-    <Row className="h-100">
-      <Col id="mid" className="my-auto">
-        <Jumbotron>
-          <div id="board">
-          </div>
-        </Jumbotron>
-      </Col>
-    </Row>
-  </Container>
-);
-
 
 class LoginForm extends React.Component {
   constructor() {
@@ -213,19 +229,91 @@ class LoadingButton extends React.Component {
   }
 }
 
+const job_container = (
+  <Container className="h-100" id="board">
+  </Container>
+);
+
+class JobBucket extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      jobs : this.props.jobs
+
+    }
+  }
+
+  renderJobCards () {
+    return this.state.jobs.map((jerb) => {
+        return <JobCard job={jerb}/>
+      })
+  } 
+
+  render() {
+    return(
+    <div>
+    {this.renderJobCards()}
+    </div>
+    )
+  }
+};
+
+class JobCard extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+  }
+
+  render() {
+
+    return (
+      <Row id="">
+        <AddressCard address={this.props.job.origin_address} />
+        <Col>
+        </Col>
+        <AddressCard address={this.props.job.destination_address} />
+      </Row>
+    );
+  }
+} 
+
+class AddressCard extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+
+  }
+
+  render() {
+
+    return (
+      <Col>
+        <div style={{margin: '5px'}}>
+          {this.props.address.name}<br/>
+          {this.props.address.street_address}<br/>
+          {this.props.address.city} {this.props.address.state} {this.props.address.postal_code}<br/>
+          {this.props.address.contact}<br/>
+          {this.props.address.special_instructions}
+        </div>
+      </Col>
+    );
+  }
+}
+
+const login_container = (
+  <Container className="h-100">
+    <Row className="h-100">
+      <Col id="mid" className="my-auto">
+        <Jumbotron>
+          <LoginForm />
+        </Jumbotron>
+      </Col>
+    </Row>
+  </Container>
+);
+
+
 ReactDOM.render(
-    top_nav,
+    top_nav_anon,
     document.getElementById('top_nav')
-);
-
-ReactDOM.render(
-    bottom_nav,
-    document.getElementById('bottom_nav')
-);
-
-ReactDOM.render(
-    main_container,
-    document.getElementById('root')
 );
 
 if (localStorage['tj-head']){
@@ -239,19 +327,28 @@ if (localStorage['tj-head']){
   }).then((response) => response.json(), (err) => {
     console.log(err);
     ReactDOM.render(
-        <LoginForm />,
-        document.getElementById('board')
+        login_container,
+        document.getElementById('root')
     );
   }).then((responseJson) => {
     localStorage['tj-head'] = responseJson['head'];
     console.log(responseJson);
     ffwdDB(responseJson);
+    ReactDOM.render(
+      top_nav,
+      document.getElementById('top_nav')
+    );
+
+    ReactDOM.render(
+      bottom_nav,
+      document.getElementById('bottom_nav')
+    );
   });
 } else {
-  ReactDOM.render(
-    <LoginForm />,
-    document.getElementById('board')
-  );
+    ReactDOM.render(
+      login_container,
+      document.getElementById('root')
+    );
 }
 
 function login_oauth(email, password) {
