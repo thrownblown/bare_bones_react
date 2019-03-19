@@ -8,6 +8,8 @@ module.exports = {
     app: './src/index.js'
   },
   devServer: {
+    host: '0.0.0.0',
+    port: 8080,
     hot: true,
     compress: true,
     contentBase: path.join(__dirname, 'dist'),

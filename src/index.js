@@ -11,8 +11,9 @@ import Row from 'react-bootstrap/Row';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import Collapse from 'react-bootstrap/Collapse';
-import moment from 'moment'
-import Image from 'react-bootstrap/Image'
+import moment from 'moment';
+import Image from 'react-bootstrap/Image';
+import Badge from 'react-bootstrap/Badge';
 
 
 import logo from './img/tj_logo.png';
@@ -85,9 +86,6 @@ function ffwdDB(data) {
     all_jobs_by_deadline(timeframe)
 }
 
-
-
-
 function all_jobs_by_deadline(timeframe){
     let currentJobs = [];
     // console.log('all_by_deadline');
@@ -110,11 +108,13 @@ function all_jobs_by_deadline(timeframe){
     //   console.log(jerb);
     // });
     let jrbs = currentJobs[0].jobs;
-    const stack = (
+    const stack =currentJobs.map((jerb) => {
+        return (
         <Container style={{marginTop:'90px', marginBottom:'90px'}}>
-        <JobBucket jobs={jrbs} />
+        <JobBucket  {...jerb} />
         </Container>
       );
+    });
 
     ReactDOM.render(
       stack,
@@ -129,10 +129,12 @@ const TJ_APP_SECRET = 'xCxElvOFdmNZDNYnLio5zFb4ybSKqDbBwrRhs9m6MdvsnqL6DuH6sidYQ
 
 const top_nav = (
   <Navbar bg="dark" variant="dark" fixed="top" >
+    <Nav className="d-sm-none d-md-block">
     <Navbar.Brand href="#home">
       <img src={logo} className="logo-image" width="131px" height="31px"/>
     </Navbar.Brand>
-    <Nav className="ml-auto" activeKey="/unassigned">
+    </Nav>
+    <Nav variant="pills" className="ml-auto" activeKey="/unassigned">
       <Nav.Item>
         <Nav.Link href="/myjobs">My Jobs</Nav.Link>
       </Nav.Item>
@@ -246,7 +248,7 @@ const job_container = (
   </Container>
 );
 
-class JobBucket extends React.Component {
+class JobList extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = this.props;
@@ -254,7 +256,7 @@ class JobBucket extends React.Component {
 
   renderJobCards () {
     return this.state.jobs.map((jerb) => {
-        return <JobCard key={jerb.id} job={jerb}/>
+        return <JobCard key={jerb.id} job={jerb} />
       })
   } 
 
@@ -267,9 +269,61 @@ class JobBucket extends React.Component {
   }
 };
 
+let boxStyle = {
+            border: '1px', 
+            borderStyle: 'solid',
+            borderColor: 'black',
+            borderRadius: '4px',
+            padding: '10px',
+            marginTop: '2px',
+            marginBottom: '2px'
+          };
+
+
+class JobBucket extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+    this.state = this.props;
+    this.showDrop = this.showDrop.bind(this);
+  }
+  showDrop() { 
+    this.setState({ open: !this.state.open });
+   }
+  render() {
+    let jobList = <JobList jobs={this.state.jobs}/>;
+    return(
+      <Row>
+        <Col style={boxStyle} xs={12} onClick={this.showDrop}>
+          <Row>
+            <Col>
+              <strong>{this.props.header_name}
+              </strong>
+            </Col>
+            <Col >
+              <div className="float-right">
+                <Badge variant="dark" style={{marginLeft:"auto"}}>{this.state.header_count}</Badge>
+              </div>
+            </Col>
+          </Row>
+        </Col>
+        {!this.state.open ? jobList : null }
+      </Row>
+    )
+  }
+};
+
 class JobCard extends React.Component {
   constructor(props, context) {
     super(props, context);
+
+    this.showDrop = this.showDrop.bind(this);
+    this.showBigDrop = this.showBigDrop.bind(this);
+    this.showBigPick = this.showBigPick.bind(this);
+    this.state = {
+      open: false,
+      big_drop: false,
+      big_pick: false,
+    };
   }
 
   jobTimeframeString(){
@@ -329,6 +383,9 @@ class JobCard extends React.Component {
     return 'https://twinjet-static.s3.amazonaws.com/routemaps/' + this.props.job.id + '_drop_map.png';
   }
 
+  showDrop() { this.setState({ open: !this.state.open }) }
+  showBigDrop() { this.setState({ big_drop: !this.state.big_drop }) }
+  showBigPick() { this.setState({ big_pick: !this.state.big_pick }) }
 
   render() {
 
@@ -343,25 +400,56 @@ class JobCard extends React.Component {
     } 
 
     return (
-      <div style={{border: '1px', borderStyle: 'solid', borderColor: 'black', borderRadius: '4px', padding: '10px'}}>
+      <div style={boxStyle}>
       <Row>
-        <Col>
-          <AddressCard address={this.props.job.origin_address} />
-          <p>
-          <em>{this.props.job.ready_due_times}</em>
-          <br/>
-          {this.jobTimeframeString()}
-          </p>
+        <Col xs={6} >
+          <Row>
+            <Col sm={12} md={6} onClick={this.showDrop}>
+              <AddressCard address={this.props.job.origin_address} />
+              <p>
+                <em>{this.props.job.ready_due_times}</em>
+                <br/>
+                {this.jobTimeframeString()}
+              </p>
+            </Col>
+            <Col sm={12} md={6} onClick={this.showBigPick}>
+              <Image fluid rounded src={this.pick_map()}/>
+            </Col>
+          </Row>
         </Col>
-        <Col>
-        <Image fluid rounded src={this.pick_map()}/>
+        <Col xs={6}>
+          <Row>
+            <Col sm={12} md={6} onClick={this.showDrop}>
+              <AddressCard address={this.props.job.destination_address}/>
+              <p>{fin_info}</p>
+            </Col>
+            <Col sm={12} md={6} onClick={this.showBigDrop}>
+              <Image fluid rounded src={this.drop_map()}/>
+            </Col>
+          </Row>
         </Col>
+      </Row>
+      <Row >
         <Col>
-          <AddressCard address={this.props.job.destination_address} />
-          <p>{fin_info}</p>
-        </Col>
-        <Col>
-        <Image fluid rounded src={this.drop_map()}/>
+          <div style={{marginTop:"2px"}} className="row">
+              <div className="col-sm-6">
+                <Collapse in={this.state.big_pick}>
+                  <Image fluid rounded src={this.pick_map()}/>
+                </Collapse>
+              </div>
+              <div className="col-sm-6">
+                <Collapse in={this.state.big_drop}>
+                  <Image fluid rounded src={this.drop_map()}/>
+                </Collapse>
+              </div>
+          </div>
+          <Collapse in={this.state.open}>
+            <div id="example-collapse-text">
+              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus
+              terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer
+              labore wes anderson cred nesciunt sapiente ea proident.
+            </div>
+          </Collapse>
         </Col>
       </Row>
       </div>
