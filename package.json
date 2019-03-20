@@ -32,7 +32,8 @@
     "react": "^16.7.0",
     "react-bootstrap": "^1.0.0-beta.5",
     "react-dom": "^16.7.0",
-    "react-moment": "^0.8.4"
+    "react-moment": "^0.8.4",
+    "react-router-dom": "^5.0.0"
   },
   "babel": {
     "presets": [
