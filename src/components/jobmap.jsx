@@ -3,9 +3,78 @@ import L from "leaflet";
 
 const style = {
   width: "100%",
-  height: (window.innerHeight - 180) + 'px',
+  height: (window.innerHeight - 120) + 'px',
   marginTop: '90px'
 };
+
+const moneygreen = '#85bb65'
+
+const greenstyle = `
+  background-color: ${moneygreen};
+  width: 2rem;
+  height: 2rem;
+  display: block;
+  left: -1rem;
+  top: -1rem;
+  position: relative;
+  border-radius: 2rem 2rem 0;
+  transform: rotate(45deg);
+  border: 1px solid #FFFFFF`
+
+const icon = L.divIcon({
+  className: "my-custom-pin",
+  iconAnchor: [0, 24],
+  labelAnchor: [-6, 0],
+  popupAnchor: [0, -36],
+  html: `<span style="${greenstyle}" />`
+})
+
+const randomcolor = '#' + ("000000" + Math.random().toString(16).slice(2, 8).toUpperCase()).slice(-6);
+
+const randomstyle = `
+  background-color: ${randomcolor};
+  width: 2rem;
+  height: 2rem;
+  display: block;
+  left: -1rem;
+  top: -1rem;
+  position: relative;
+  border-radius: 2rem 2rem 0;
+  transform: rotate(45deg);
+  border: 1px solid #FFFFFF`
+
+const ricon = L.divIcon({
+  className: "r-custom-pin",
+  iconAnchor: [0, 24],
+  labelAnchor: [-6, 0],
+  popupAnchor: [0, -36],
+  html: `<span style="${randomstyle}" />`
+})
+
+
+function popupTemplate(job) {
+  const popup = `
+  <div class="row">
+    <div class="col">
+      <strong>${job.origin_address.name}</strong><br/>
+      ${job.origin_address.street_address}<br/>
+      ${job.origin_address.floor}<br/>
+      ${job.origin_address.city} ${job.origin_address.state} ${job.origin_address.postal_code}<br/>
+      ${job.origin_address.contact}<br/>
+      ${job.origin_address.special_instructions}<br/>
+    </div>
+    <div class="col">
+      <strong>${job.destination_address.name}</strong><br/>
+      ${job.destination_address.street_address}<br/>
+      ${job.destination_address.floor}<br/>
+      ${job.destination_address.city} ${job.destination_address.state} ${job.destination_address.postal_code}<br/>
+      ${job.destination_address.contact}<br/>
+      ${job.destination_address.special_instructions}<br/>
+    </div>
+  </div>`
+    return popup;
+}
+
 
 function decode(encoded, precision) {
   precision = Math.pow(10, - precision);
@@ -48,8 +117,7 @@ class JobMap extends React.Component {
       zoom: 16,
       layers: [
         L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', {
-          attribution:
-            '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://www.openstreetmap.org/copyright">ODbL</a>.'
         })
       ]
     });
@@ -69,24 +137,21 @@ class JobMap extends React.Component {
     let board = new L.featureGroup();
     this.map.addLayer(board);
 
-      // let picklist = openJobs.map(job => {
-      //   return { latLng: { lat: job.origin_address.lat, lng: job.origin_address.lng }, title: job.id };
-      // });
-      // let droplist = openJobs.map(job => {
-      //   return { latLng: { lat: job.destination_address.lat, lng: job.destination_address.lng }, title: job.id };
-      // });
-      // let routes = openJobs.map(job => job.route_geometry);
-
-
     if (pickMarkers.length){
       this.props.pickMarkers.forEach(job => {
-        L.marker({ lat: job.destination_address.lat, lng: job.destination_address.lng }).addTo(board);
-        L.marker({ lat: job.origin_address.lat, lng: job.origin_address.lng }).addTo(board);
+
+
+
+        let popup = popupTemplate(job);
+        let pick = L.marker({ lat: job.destination_address.lat, lng: job.destination_address.lng }, { icon: ricon }).addTo(board);
+        let drop = L.marker({ lat: job.origin_address.lat, lng: job.origin_address.lng }, { icon: icon });
+        drop.bindPopup(popup, { minWidth : 300 } ).openPopup();
+        drop.addTo(board);
         let latlngs = decode(job.route_geometry, 6);
         let polyline = L.polyline(latlngs, {
             color: 'red',
             opacity: 0.7,
-            weight: 13
+            weight: 8
         }).addTo(board);
       });
 
