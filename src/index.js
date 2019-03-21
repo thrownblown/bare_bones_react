@@ -792,7 +792,7 @@ class TopNav extends React.Component {
 
   showMap () {
     if (this.state.map) {
-      this.setState({ jobs: this.state.oldJobs, map: false});
+      this.setState({ jobs: this.state.oldJobs, map: false });
     } else {
       let openJobs = document.getElementsByClassName('job-card');
       openJobs = Array.from(openJobs, j => j.id);
@@ -809,12 +809,12 @@ class TopNav extends React.Component {
         <Navbar bg='dark' variant='dark' fixed='top' >
           <Nav className='d-none d-md-block'>
             <Navbar.Brand href='#home'>
-              <img src={logo} className='logo-image' width='131px' height='31px'/>
+              <img src={'static/'+logo} className='logo-image' width='131px' height='31px'/>
             </Navbar.Brand>
           </Nav>
           <Nav className='d-md-none'>
             <Navbar.Brand href='#home'>
-              <img src={tile} className='logo-image' width='31px' height='31px'/>
+              <img src={'static/'+tile} className='logo-image' width='31px' height='31px'/>
             </Navbar.Brand>
           </Nav>
           <Nav variant='pills' className='ml-auto' activeKey={this.state.key}>
