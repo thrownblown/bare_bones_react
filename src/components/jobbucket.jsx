@@ -60,7 +60,7 @@ class JobList extends React.Component {
 class JobBucket extends React.Component {
   constructor(props, context) {
     super(props, context);
-    this.state = { open: false };
+    this.state = { open: this.props.open };
     this.showDrop = this.showDrop.bind(this);
   }
   showDrop() { 

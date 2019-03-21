@@ -684,6 +684,7 @@ class TopNav extends React.Component {
     super(props, context);
     this.state = {
       key: '#alljobs',
+      open: true,
       jobs: all_jobs_by_deadline(timeframe)
     };
     this.showMyJobs = this.showMyJobs.bind(this);
@@ -797,7 +798,7 @@ class TopNav extends React.Component {
             </Nav.Item>
           </Nav>
         </Navbar>
-        <Board board={this.state.jobs} open={true} />
+        <Board board={this.state.jobs} open={this.state.open} />
       </div>
     );
   }
