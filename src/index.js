@@ -18,41 +18,41 @@ import Board from './components/jobbucket.jsx';
 //* CONSTANTS
 //**********************************************
 
-const VIEW_MODE_MY_JOBS = 'myjobs',
-    VIEW_MODE_EVERYBODY = 'everybody',
-    VIEW_MODE_UNASSIGNED = 'unassigned',
+const VIEW_MODE_MY_JOBS = 'myjobs';
+const VIEW_MODE_EVERYBODY = 'everybody';
+const VIEW_MODE_UNASSIGNED = 'unassigned';
 
-    SORT_MODE_CLIENT = 'client',
-    SORT_MODE_COURIER = 'courier',
-    SORT_MODE_DEADLINE = 'deadline',
-    SORT_MODE_STATUS = 'status',
-    SORT_MODE_ZIP = 'zip',
-    SORT_MODE_ZONE = 'zone',
+const SORT_MODE_CLIENT = 'client';
+const SORT_MODE_COURIER = 'courier';
+const SORT_MODE_DEADLINE = 'deadline';
+const SORT_MODE_STATUS = 'status';
+const SORT_MODE_ZIP = 'zip';
+const SORT_MODE_ZONE = 'zone';
 
-    FILTER_MODE_MY_CLIENTS = 'myclients',
-    FILTER_MODE_ALL_CLIENTS = 'allclients',
+const FILTER_MODE_MY_CLIENTS = 'myclients';
+const FILTER_MODE_ALL_CLIENTS = 'allclients';
 
-    JOB_MENU_UNASSIGNED = 'unassignedmenu',
-    JOB_MENU_NOT_PICKED = 'notpickedmenu',
-    JOB_MENU_PICKED = 'pickedmenu',
-    JOB_MENU_DELIVERED = 'deliveredmenu',
-    JOB_MENU_COMPLETED = 'completedmenu';
+const JOB_MENU_UNASSIGNED = 'unassignedmenu';
+const JOB_MENU_NOT_PICKED = 'notpickedmenu';
+const JOB_MENU_PICKED = 'pickedmenu';
+const JOB_MENU_DELIVERED = 'deliveredmenu';
+const JOB_MENU_COMPLETED = 'completedmenu';
 
 //**********************************************
 //* VARIABLES
-//*********************************************
+//**********************************************
 
-let currentViewMode = VIEW_MODE_EVERYBODY,
-    lookahead,
-    lookaheadMinutes,
-    currentFilterMode = FILTER_MODE_ALL_CLIENTS,
-    sortModeForMyJobs = SORT_MODE_DEADLINE,
-    sortModeForEverybodyJobs = SORT_MODE_DEADLINE,
-    sortModeForUnassignedJobs = SORT_MODE_DEADLINE,
-    timeframe;
+let currentViewMode = VIEW_MODE_EVERYBODY;
+let currentFilterMode = FILTER_MODE_ALL_CLIENTS;
+let sortModeForMyJobs = SORT_MODE_DEADLINE;
+let sortModeForEverybodyJobs = SORT_MODE_DEADLINE;
+let sortModeForUnassignedJobs = SORT_MODE_DEADLINE;
 let showStatus = false;
 let showCourier = false;
 let showCompleted = false;
+let timeframe;
+let lookahead;
+let lookaheadMinutes;
 
 //**********************************************
 //* Loki init
@@ -804,7 +804,6 @@ class TopNav extends React.Component {
   }
 }
 
-const top_nav = <TopNav />;
 const top_nav_anon = (
   <Navbar bg='dark' variant='dark' fixed='top' >
     <Navbar.Brand href='#home'>
@@ -817,13 +816,13 @@ const bottom_nav = (
   <Navbar bg='light' variant='light' fixed='bottom' >
     <Nav justify variant='pill' defaultActiveKey='/myjobs'>
       <Nav.Item>
-      <Nav.Link href='/myjobs'>My Jobs</Nav.Link>
+        <Nav.Link href='/myjobs'>My Jobs</Nav.Link>
       </Nav.Item>
       <Nav.Item>
-      <Nav.Link href='#alljobs'>All Jobs</Nav.Link>
+        <Nav.Link href='#alljobs'>All Jobs</Nav.Link>
       </Nav.Item>
       <Nav.Item>
-      <Nav.Link href='#unassigned'>Unassigned</Nav.Link>
+        <Nav.Link href='#unassigned'>Unassigned</Nav.Link>
       </Nav.Item>
     </Nav>
   </Navbar>
@@ -831,13 +830,13 @@ const bottom_nav = (
 
 const login_container = (
   <Container className='h-100'>
-  <Row className='h-100'>
-    <Col id='mid' className='my-auto'>
-    <Jumbotron>
-      <LoginForm />
-    </Jumbotron>
-    </Col>
-  </Row>
+    <Row className='h-100'>
+      <Col id='mid' className='my-auto'>
+        <Jumbotron>
+          <LoginForm />
+        </Jumbotron>
+      </Col>
+    </Row>
   </Container>
 );
 
@@ -855,7 +854,7 @@ initFetch(() => {
       console.log(responseJson);
       ffwdDB(responseJson);
       ReactDOM.render(
-        top_nav,
+        <TopNav />,
         document.getElementById('root')
       );
     });
