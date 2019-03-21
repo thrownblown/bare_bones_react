@@ -688,7 +688,9 @@ class TopNav extends React.Component {
       key: '#alljobs',
       open: true,
       jobs: all_jobs_by_deadline(timeframe),
-      map: false
+      map: false,
+      openJobs: [],
+      oldJobs: []
     };
     this.showMyJobs = this.showMyJobs.bind(this);
     this.showAllJobs = this.showAllJobs.bind(this);
@@ -777,13 +779,16 @@ class TopNav extends React.Component {
   }
 
   showMap () {
-    let openJob = document.getElementsByClassName('job-card');
-    openJob = Array.from(openJob, a => a.id);
-    console.log(openJob);
-    let jobs = jerbs.chain()
-    openJob = jobs.find({ 'id': { '$in': openJob } });
-    console.log(openJob);
-    this.setState({ jobs: [], map: true });
+    if (this.state.map) {
+      this.setState({ jobs: this.state.oldJobs, map: false});
+    } else {
+      let openJobs = document.getElementsByClassName('job-card');
+      openJobs = Array.from(openJobs, j => j.id);
+      console.log(openJobs);
+      let jobs = jerbs.chain();
+      openJobs = jobs.find({ 'id': { '$in': openJobs } }).data();
+      this.setState({ oldJobs: this.state.jobs, jobs: [], map: true, openJobs: openJobs });
+    }
   }
 
   render () {
@@ -815,7 +820,7 @@ class TopNav extends React.Component {
             </Nav.Item>
           </Nav>
         </Navbar>
-        {this.state.map ? (<Container><JobMap/></Container>) : null }
+        {this.state.map ? (<Container><JobMap pickMarkers={this.state.openJobs} /></Container>) : null }
 
         <Board board={this.state.jobs} open={this.state.open} />
       </div>
