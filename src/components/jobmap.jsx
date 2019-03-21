@@ -7,29 +7,31 @@ const style = {
   marginTop: '90px'
 };
 
-const moneygreen = '#85bb65'
+function iconStyler (color) {
 
-const greenstyle = `
-  background-color: ${moneygreen};
-  width: 2rem;
-  height: 2rem;
-  display: block;
-  left: -1rem;
-  top: -1rem;
-  position: relative;
-  border-radius: 2rem 2rem 0;
-  transform: rotate(45deg);
-  border: 1px solid #FFFFFF`
+  const styles = `
+    background-color: ${color};
+    width: 2rem;
+    height: 2rem;
+    display: block;
+    left: -1rem;
+    top: -1rem;
+    position: relative;
+    border-radius: 2rem 2rem 0;
+    transform: rotate(45deg);
+    border: 1px solid #FFFFFF`
 
-const icon = L.divIcon({
-  className: "my-custom-pin",
-  iconAnchor: [0, 24],
-  labelAnchor: [-6, 0],
-  popupAnchor: [0, -36],
-  html: `<span style="${greenstyle}" />`
-})
+  const icon = L.divIcon({
+    className: "my-custom-pin",
+    iconAnchor: [0, 24],
+    labelAnchor: [-6, 0],
+    popupAnchor: [0, -36],
+    html: `<span style="${styles}" />`
+  })
+  return icon;
+} 
 
-function popupTemplate(job) {
+function popupTemplate (job) {
   const popup = `
   <div class="row">
     <div class="col">
@@ -53,7 +55,7 @@ function popupTemplate(job) {
 }
 
 
-function decode(encoded, precision) {
+function decode (encoded, precision) {
   precision = Math.pow(10, - precision);
   let len = encoded.length,
       index = 0,
@@ -116,7 +118,6 @@ class JobMap extends React.Component {
 
     if (pickMarkers.length){
       this.props.pickMarkers.forEach(job => {
-        const randomcolor = '#' + ("000000" + Math.random().toString(16).slice(2, 8).toUpperCase()).slice(-6);
 
        let ribbonColor;
         // classify by ribbonColor, set map options here
@@ -134,29 +135,15 @@ class JobMap extends React.Component {
             ribbonColor = '#1974D2';
         }
 
-        const randomstyle = `
-          background-color: ${randomcolor};
-          width: 2rem;
-          height: 2rem;
-          display: block;
-          left: -1rem;
-          top: -1rem;
-          position: relative;
-          border-radius: 2rem 2rem 0;
-          transform: rotate(45deg);
-          border: 1px solid #FFFFFF`;
-
-        const ricon = L.divIcon({
-          className: "r-custom-pin",
-          iconAnchor: [0, 24],
-          labelAnchor: [-6, 0],
-          popupAnchor: [0, -36],
-          html: `<span style="${randomstyle}" />`
-        });
+        const randomcolor = '#' + ("000000" + Math.random().toString(16).slice(2, 8).toUpperCase()).slice(-6);
+        const pickicon = iconStyler(randomcolor);
 
         let popup = popupTemplate(job);
-        let pick = L.marker({ lat: job.destination_address.lat, lng: job.destination_address.lng }, { icon: ricon }).addTo(board);
-        let drop = L.marker({ lat: job.origin_address.lat, lng: job.origin_address.lng }, { icon: icon });
+        let pick = L.marker({ lat: job.destination_address.lat, lng: job.destination_address.lng }, { icon: pickicon }).addTo(board);
+
+        const moneygreen = '#85bb65'
+        const dropicon = iconStyler(moneygreen);
+        let drop = L.marker({ lat: job.origin_address.lat, lng: job.origin_address.lng }, { icon: dropicon });
         drop.bindPopup(popup, { minWidth : 300 } ).openPopup();
         drop.addTo(board);
         let latlngs = decode(job.route_geometry, 6);

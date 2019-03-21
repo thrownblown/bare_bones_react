@@ -726,7 +726,7 @@ class TopNav extends React.Component {
 
   showAllJobs () {
     if (this.state.map) {
-      this.setState({ jobs: this.state.oldJobs, map: false});
+      this.setState({ jobs: this.state.oldJobs, map: false });
       if (currentViewMode === VIEW_MODE_EVERYBODY) return;
     }
     let jobs;
@@ -761,7 +761,7 @@ class TopNav extends React.Component {
 
   showUnJobs () {
     if (this.state.map) {
-      this.setState({ jobs: this.state.oldJobs, map: false});
+      this.setState({ jobs: this.state.oldJobs, map: false });
       if (currentViewMode === VIEW_MODE_UNASSIGNED) return;
     }
     let jobs;
@@ -809,12 +809,12 @@ class TopNav extends React.Component {
         <Navbar bg='dark' variant='dark' fixed='top' >
           <Nav className='d-none d-md-block'>
             <Navbar.Brand href='#home'>
-              <img src={'static/'+logo} className='logo-image' width='131px' height='31px'/>
+              <img src={'static/' + logo} className='logo-image' width='131px' height='31px'/>
             </Navbar.Brand>
           </Nav>
           <Nav className='d-md-none'>
             <Navbar.Brand href='#home'>
-              <img src={'static/'+tile} className='logo-image' width='31px' height='31px'/>
+              <img src={'static/' + tile} className='logo-image' width='31px' height='31px'/>
             </Navbar.Brand>
           </Nav>
           <Nav variant='pills' className='ml-auto' activeKey={this.state.key}>
@@ -844,7 +844,7 @@ const top_nav_anon = (
   <div>
     <Navbar bg='dark' variant='dark' fixed='top' >
       <Navbar.Brand href='#home'>
-        <img src={logo} className='logo-image' width='131px' height='31px' />
+        <img src={'static/' + logo} className='logo-image' width='131px' height='31px' />
       </Navbar.Brand>
     </Navbar>
     <div className='h-100' id="login"></div>
