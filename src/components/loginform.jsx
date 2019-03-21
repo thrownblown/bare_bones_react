@@ -14,10 +14,10 @@ function login_oauth(email, password) {
   fetch('https://twinjet.co/api/oauth2/token/', {
     body: body,
     headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": "Basic " + client_cred
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + client_cred
     },
-    method: "post"
+    method: 'post'
   })
   .then((response) => response.json())
   .then((responseJson) => {
@@ -26,21 +26,22 @@ function login_oauth(email, password) {
       localStorage['tj_id-' + item] = responseJson[item]
     }
     console.log(localStorage)
+    init();
     return true;
   }).then((vale) => {
-    fetch_board_head();
+    // fetch_board_headi();
     return vale;
   });
 }
 
 function fetch_board_head() {
   let auth_token = localStorage['tj_id-access_token'];
-  fetch("https://twinjet.co/boardapi/v1/jobdeltas/head/", {
+  fetch('https://twinjet.co/boardapi/v1/jobdeltas/head/', {
     headers: {
-        "Authorization": "Bearer " + auth_token,
-        "Content-Type": "application/json",
+        'Authorization': 'Bearer ' + auth_token,
+        'Content-Type': 'application/json',
     },
-    method: "get"
+    method: 'get'
   }).then((response) => response.json())
   .then((responseJson) => {
     localStorage['tj-head'] = responseJson['head'];
@@ -54,8 +55,8 @@ class LoginForm extends React.Component {
   constructor() {
     super();
     this.state = {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
       isLoading: false
     };
   }
@@ -86,17 +87,17 @@ class LoginForm extends React.Component {
   render() {
     return (
       <Form onSubmit={this.handleSubmit}>
-        <Form.Group controlId="formBasicEmail" className="justify-content-center text-center">
-          <img src={tile} height="72" width="72"  />
+        <Form.Group controlId='formBasicEmail' className='justify-content-center text-center'>
+          <img src={tile} height='72' width='72'  />
           <br />
           <Form.Label >TwinJet Login</Form.Label>
-          <Form.Control type="text" placeholder="Username or Email" 
+          <Form.Control type='text' placeholder='Username or Email' 
             value={this.state.email}
             onChange={this.handleEmailChange}
           />
         </Form.Group>
-        <Form.Group controlId="formBasicPassword">
-          <Form.Control type="password" placeholder="Password" 
+        <Form.Group controlId='formBasicPassword'>
+          <Form.Control type='password' placeholder='Password' 
               value={this.state.password}
               onChange={this.handlePasswordChange}
           />
@@ -116,8 +117,8 @@ class LoadingButton extends React.Component {
 
     return (
       <Button
-        variant="dark"
-        type="submit"
+        variant='dark'
+        type='submit'
         disabled={this.props.isLoading}
       >
         {this.props.isLoading ? 'Hang Tight...' : 'Login'}

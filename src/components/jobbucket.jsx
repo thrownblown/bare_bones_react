@@ -103,6 +103,7 @@ class JobCard extends React.Component {
       open: false,
       big_drop: false,
       big_pick: false,
+      big_route : true
     };
   }
 
@@ -166,6 +167,10 @@ class JobCard extends React.Component {
     } 
   }
 
+  routeMap() {
+    return 'https://twinjet-static.s3.amazonaws.com/routemaps/' + this.props.job.id + '_route_map.png';
+  }
+
   pickMap() { 
     return 'https://twinjet-static.s3.amazonaws.com/routemaps/' + this.props.job.id + '_pick_map.png';
   }
@@ -176,11 +181,26 @@ class JobCard extends React.Component {
   showDrop() { this.setState({ open: !this.state.open }) }
   showBigDrop() { this.setState({ big_drop: !this.state.big_drop }) }
   showBigPick() { this.setState({ big_pick: !this.state.big_pick }) }
+  showBigRoute() { this.setState({ big_pick: !this.state.big_pick }) }
 
   render() {
-    return (
+    const maprow =(
 
-      <div style={boxStyle}>
+      <div class="row">
+        <div class="col">
+          <Image fluid rounded src={this.pickMap()}/>
+        </div>
+        <div class="col">
+          <Image fluid rounded src={this.routeMap()}/>
+        </div>
+        <div class="col">
+          <Image fluid rounded src={this.dropMap()}/>
+        </div>
+      </div>
+    );
+
+    return (
+      <div style={boxStyle} className="job-card" id={this.props.job.id}>
       <Row>
         <Col xs={6} >
           <Row>
@@ -192,7 +212,7 @@ class JobCard extends React.Component {
                 {this.jobTimeframeString()}
               </p>
             </Col>
-            <Col sm={12} md={6} onClick={this.showBigPick}>
+            <Col sm={12} md={6} className="d-none d-sm-block" onClick={this.showBigPick}>
               <Image fluid rounded src={this.pickMap()}/>
             </Col>
           </Row>
@@ -203,7 +223,7 @@ class JobCard extends React.Component {
               <AddressCard address={this.props.job.destination_address}/>
               <p>{this.finInfo()}</p>
             </Col>
-            <Col sm={12} md={6} onClick={this.showBigDrop}>
+            <Col sm={12} md={6} className="d-none d-sm-block" onClick={this.showBigDrop}>
               <Image fluid rounded src={this.dropMap()}/>
             </Col>
           </Row>
@@ -211,18 +231,9 @@ class JobCard extends React.Component {
       </Row>
       <Row >
         <Col>
-          <div style={{marginTop:"2px"}} className="row">
-              <div className="col-sm-6">
-                <Collapse in={this.state.big_pick}>
-                  <Image fluid rounded src={this.pickMap()}/>
-                </Collapse>
-              </div>
-              <div className="col-sm-6">
-                <Collapse in={this.state.big_drop}>
-                  <Image fluid rounded src={this.dropMap()}/>
-                </Collapse>
-              </div>
-          </div>
+
+          {this.state.open ? maprow : null }
+
           <Collapse in={this.state.open}>
             <div id="example-collapse-text">
               <strong>Assignment Status:</strong>{this.props.job.assignment_status}<br/>

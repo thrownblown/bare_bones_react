@@ -13,6 +13,8 @@ import logo from './img/tj_logo.png';
 import tile from './img/light_logo.png';
 import LoginForm from './components/loginform.jsx';
 import Board from './components/jobbucket.jsx';
+import JobMap from './components/jobmap.jsx';
+
 
 //**********************************************
 //* CONSTANTS
@@ -54,14 +56,14 @@ let timeframe;
 let lookahead;
 let lookaheadMinutes;
 
-//**********************************************
-//* Loki init
-//**********************************************
-
 timeframe = new Date();
 timeframe.setMinutes(59);
 timeframe.setHours(24);
 timeframe.setYear(3000);
+
+//**********************************************
+//* Loki init
+//**********************************************
 
 const loki = require('lokijs');
 const lokiAdapter = require('lokijs/src/loki-indexed-adapter.js');
@@ -86,7 +88,7 @@ function databaseInitialize () {
   return jobs;
 }
 
-function initFetch (initCallback) {
+window.initFetch = function (initCallback) {
   let count = 0;
 
   twinget('https://twinjet.co/boardapi/v1/status/', (data) =>{
@@ -654,26 +656,26 @@ function twinget (geturl, successCallback) {
   console.log('twinget', geturl);
   let auth_token = localStorage['tj_id-access_token'];
   return fetch(geturl, {
-  headers: {
-    'Authorization': 'Bearer ' + auth_token,
-    'Content-Type': 'application/json'
-  },
-  method: 'get'
+    headers: {
+      'Authorization': 'Bearer ' + auth_token,
+      'Content-Type': 'application/json'
+    },
+    method: 'get'
   }).then((response) => {
-  if (response.status >= 400 && response.status < 600) {
-    localStorage.clear();
-    ReactDOM.render(
-    login_container,
-    document.getElementById('root')
-    );
-  }
-  return response.json();
+    if (response.status >= 400 && response.status < 600) {
+      localStorage.clear();
+      ReactDOM.render(
+        login_container,
+        document.getElementById('login')
+      );
+    }
+    return response.json();
   }, (err) => {
-  console.log(err);
-  ReactDOM.render(
-    login_container,
-    document.getElementById('root')
-  );
+    console.log(err);
+    ReactDOM.render(
+      login_container,
+      document.getElementById('login')
+    );
   }).then((data) => {
     successCallback ? successCallback(data) : console.log(data);
   });
@@ -685,11 +687,13 @@ class TopNav extends React.Component {
     this.state = {
       key: '#alljobs',
       open: true,
-      jobs: all_jobs_by_deadline(timeframe)
+      jobs: all_jobs_by_deadline(timeframe),
+      map: false
     };
     this.showMyJobs = this.showMyJobs.bind(this);
     this.showAllJobs = this.showAllJobs.bind(this);
     this.showUnJobs = this.showUnJobs.bind(this);
+    this.showMap = this.showMap.bind(this);
   }
 
   showMyJobs () {
@@ -711,7 +715,7 @@ class TopNav extends React.Component {
       this.setState({ key: '#myjobs' });
       jobs = my_jobs_by_deadline();
     }
-    this.setState({ jobs: jobs, open: open });
+    this.setState({ jobs: jobs, open: open, map: false });
   }
 
   showAllJobs () {
@@ -742,7 +746,7 @@ class TopNav extends React.Component {
       jobs = all_jobs_by_deadline(timeframe);
       open = true;
     }
-    this.setState({ jobs: jobs, open: open });
+    this.setState({ jobs: jobs, open: open, map: false });
   }
 
   showUnJobs () {
@@ -769,7 +773,17 @@ class TopNav extends React.Component {
       jobs = unassigned_jobs_by_deadline(timeframe);
       open = true;
     }
-    this.setState({ jobs: jobs, open: open });
+    this.setState({ jobs: jobs, open: open, map: false });
+  }
+
+  showMap () {
+    let openJob = document.getElementsByClassName('job-card');
+    openJob = Array.from(openJob, a => a.id);
+    console.log(openJob);
+    let jobs = jerbs.chain()
+    openJob = jobs.find({ 'id': { '$in': openJob } });
+    console.log(openJob);
+    this.setState({ jobs: [], map: true });
   }
 
   render () {
@@ -788,16 +802,21 @@ class TopNav extends React.Component {
           </Nav>
           <Nav variant='pills' className='ml-auto' activeKey={this.state.key}>
             <Nav.Item>
-              <Nav.Link href='#myjobs' onClick={this.showMyJobs}>My Jobs</Nav.Link>
+              <Nav.Link href='#mapjobs' onSelect={this.showMap}>Map</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href='#alljobs' onClick={this.showAllJobs}>All Jobs</Nav.Link>
+              <Nav.Link href='#myjobs' onSelect={this.showMyJobs}>My Jobs</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href='#unassigned' onClick={this.showUnJobs}>Unassigned</Nav.Link>
+              <Nav.Link href='#alljobs' onSelect={this.showAllJobs}>All Jobs</Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href='#unassigned' onSelect={this.showUnJobs}>Unassigned</Nav.Link>
             </Nav.Item>
           </Nav>
         </Navbar>
+        {this.state.map ? (<Container><JobMap/></Container>) : null }
+
         <Board board={this.state.jobs} open={this.state.open} />
       </div>
     );
@@ -805,11 +824,14 @@ class TopNav extends React.Component {
 }
 
 const top_nav_anon = (
-  <Navbar bg='dark' variant='dark' fixed='top' >
-    <Navbar.Brand href='#home'>
-      <img src={logo} className='logo-image' width='131px' height='31px' />
-    </Navbar.Brand>
-  </Navbar>
+  <div>
+    <Navbar bg='dark' variant='dark' fixed='top' >
+      <Navbar.Brand href='#home'>
+        <img src={logo} className='logo-image' width='131px' height='31px' />
+      </Navbar.Brand>
+    </Navbar>
+    <div className='h-100' id="login"></div>
+  </div>
 );
 
 const bottom_nav = (
@@ -829,14 +851,16 @@ const bottom_nav = (
 );
 
 const login_container = (
-  <Container className='h-100'>
-    <Row className='h-100'>
-      <Col id='mid' className='my-auto'>
-        <Jumbotron>
+  <Container className='h-100' style={{marginTop: '90px'}}>
+    <Jumbotron>
+      <Row className='h-100'>
+        <Col></Col>
+        <Col md={5} id='mid' className='my-auto'>
           <LoginForm />
-        </Jumbotron>
-      </Col>
-    </Row>
+        </Col>
+        <Col></Col>
+      </Row>
+    </Jumbotron>
   </Container>
 );
 
@@ -845,8 +869,8 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-initFetch(() => {
-  if (localStorage['tj-head']) {
+window.init = function () {
+  initFetch(() => {
     let auth_token = localStorage['tj_id-access_token'];
 
     twinget('https://twinjet.co/boardapi/v1/jobdeltas/head/', (responseJson) => {
@@ -858,13 +882,17 @@ initFetch(() => {
         document.getElementById('root')
       );
     });
-  } else {
-    ReactDOM.render(
-      login_container,
-      document.getElementById('root')
-    );
-  }
-});
+  });
+};
+
+if (localStorage.head) {
+  init();
+} else {
+  ReactDOM.render(
+    login_container,
+    document.getElementById('login')
+  );
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
