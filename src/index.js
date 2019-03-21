@@ -699,6 +699,10 @@ class TopNav extends React.Component {
   }
 
   showMyJobs () {
+    if (this.state.map) {
+      this.setState({ jobs: this.state.oldJobs, map: false});
+      if (currentViewMode === VIEW_MODE_MY_JOBS) return;
+    }
     let jobs;
     let open = false;
     if (currentViewMode === VIEW_MODE_MY_JOBS) {
@@ -721,6 +725,10 @@ class TopNav extends React.Component {
   }
 
   showAllJobs () {
+    if (this.state.map) {
+      this.setState({ jobs: this.state.oldJobs, map: false});
+      if (currentViewMode === VIEW_MODE_EVERYBODY) return;
+    }
     let jobs;
     let open = false;
     if (currentViewMode === VIEW_MODE_EVERYBODY) {
@@ -752,6 +760,10 @@ class TopNav extends React.Component {
   }
 
   showUnJobs () {
+    if (this.state.map) {
+      this.setState({ jobs: this.state.oldJobs, map: false});
+      if (currentViewMode === VIEW_MODE_UNASSIGNED) return;
+    }
     let jobs;
     let open = false;
     if (currentViewMode === VIEW_MODE_UNASSIGNED) {
@@ -807,13 +819,13 @@ class TopNav extends React.Component {
           </Nav>
           <Nav variant='pills' className='ml-auto' activeKey={this.state.key}>
             <Nav.Item>
-              <Nav.Link href='#mapjobs' onSelect={this.showMap}>Map</Nav.Link>
+              <Nav.Link href='#mapjobs' onClick={this.showMap}>Map</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href='#myjobs' onSelect={this.showMyJobs}>My Jobs</Nav.Link>
+              <Nav.Link href='#myjobs' onClick={this.showMyJobs}>My Jobs</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href='#alljobs' onSelect={this.showAllJobs}>All Jobs</Nav.Link>
+              <Nav.Link href='#alljobs' onClick={this.showAllJobs}>All Jobs</Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link href='#unassigned' onSelect={this.showUnJobs}>Unassigned</Nav.Link>
