@@ -139,11 +139,11 @@ class JobMap extends React.Component {
         const pickicon = iconStyler(randomcolor);
 
         let popup = popupTemplate(job);
-        let pick = L.marker({ lat: job.destination_address.lat, lng: job.destination_address.lng }, { icon: pickicon, title: job.client.name }).addTo(board);
+        let pick = L.marker({ lat: job.origin_address.lat, lng: job.origin_address.lng }, { icon: pickicon, title: job.client.name }).addTo(board);
 
         const moneygreen = '#85bb65'
         const dropicon = iconStyler(moneygreen);
-        let drop = L.marker({ lat: job.origin_address.lat, lng: job.origin_address.lng }, { icon: dropicon });
+        let drop = L.marker({ lat: job.destination_address.lat, lng: job.destination_address.lng }, { icon: dropicon });
         drop.bindPopup(popup, { minWidth : 300 } ).openPopup();
         drop.addTo(board);
         let latlngs = decode(job.route_geometry, 6);
