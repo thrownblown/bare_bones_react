@@ -1,16 +1,16 @@
-# Bare Bones React
+# TWinJet.co React Client
 
-![Bare Bones the Mascot](https://github.com/chawk/bare_bones_react/blob/master/dist/img/logo.png?raw=true)
+**Modern JS PWA**
 
-**What you need to get started with React and EVERYTHING YOU DON'T**
 
-This is a really simple React project to get started quickly.  No linters, no formatting, coloring, minifiers, uglifiers, sass loaders, css loaders etc... Literally just enough to get React running so you can install those things as you like. 
+## Componenets
 
-What makes Bare Bones React powerful is that the environment is setup for both development and production using Node/ExpressJS.   However, should you want to just use Bare Bones React for the UI piece you can still do that as well and simply scrap the server folder. 
+AddressCard - Delivery Location info
+JobCard - Delivery job details
+JobMap - Maps all job buckets with open tabs
+Board - All th job buckets
+JobBucket - Holds a category of jobs
 
-## Motiviation
-
-Create-react-app is too bloated for many people's liking.  We personally don't like a bunch of opinionated built in config files for unit testing and ES linting the end user hasn't even seen.  Bare Bones React will not get in your way when getting started with React.
 
 ## Documentation
 
