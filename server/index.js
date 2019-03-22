@@ -12,6 +12,7 @@ app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.use('/static', express.static('../dist'));
 
 app.post('/webhooks/github', (req, res) => {
+  console.log('wepostin');
   let sender = req.body.sender;
   let branch = req.body.ref;
 
