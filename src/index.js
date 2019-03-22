@@ -66,17 +66,19 @@ timeframe.setYear(3000);
 //**********************************************
 
 const loki = require('lokijs');
-const lokiAdapter = require('lokijs/src/loki-indexed-adapter.js');
+const indexedDBAdapter = require('lokijs/src/loki-indexed-adapter.js');
+let idbAdapter = new indexedDBAdapter();
 let activeClients = [];
 let activeCouriers = [];
 let myClients = [];
 let clientsets = [];
 let tjdb = new loki('twinjet_db', {
   env: 'BROWSER',
-  // autoload: true,
-  // autoloadCallback : databaseInitialize,
-  // autosave: true,
-  // autosaveInterval: 10000
+  adapter: idbAdapter,
+  autoload: true,
+  autoloadCallback : databaseInitialize,
+  autosave: true,
+  autosaveInterval: 10000
 });
 
 function databaseInitialize () {
@@ -155,7 +157,7 @@ window.ffwdDB = function (data) {
     }
   }
   try {
-    tjdb.save();
+    // tjdb.save();
     localStorage.head = data.head;
     localStorage.headDate = new Date();
   } catch (e) {
