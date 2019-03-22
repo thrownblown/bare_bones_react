@@ -88,7 +88,7 @@ class LoginForm extends React.Component {
     return (
       <Form onSubmit={this.handleSubmit}>
         <Form.Group controlId='formBasicEmail' className='justify-content-center text-center'>
-          <img src={tile} height='72' width='72'  />
+          <img src={'static/' + tile} height='72' width='72'  />
           <br />
           <Form.Label >TwinJet Login</Form.Label>
           <Form.Control type='text' placeholder='Username or Email' 

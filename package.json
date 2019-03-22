@@ -35,7 +35,8 @@
     "react-dom": "^16.7.0",
     "react-leaflet": "^2.2.1",
     "react-moment": "^0.8.4",
-    "react-router-dom": "^5.0.0"
+    "react-router-dom": "^5.0.0",
+    "sudo-js": "^1.0.2"
   },
   "babel": {
     "presets": [
