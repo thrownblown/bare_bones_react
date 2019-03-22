@@ -139,7 +139,12 @@ window.initFetch = function (initCallback) {
       initCallback();
     }
   });
-}
+};
+
+function updateJobs () {
+  const url ='https://twinjet.co/boardapi/v1/jobdeltas/fastforward/' + localStorage.head.toString();
+  twinget(url, ffwdDB);
+};
 
 let jerbs = databaseInitialize();
 
@@ -701,6 +706,7 @@ class TopNav extends React.Component {
   }
 
   showMyJobs () {
+    updateJobs();
     if (this.state.map) {
       this.setState({ jobs: this.state.oldJobs, map: false});
       if (currentViewMode === VIEW_MODE_MY_JOBS) return;
@@ -727,6 +733,7 @@ class TopNav extends React.Component {
   }
 
   showAllJobs () {
+    updateJobs();
     if (this.state.map) {
       this.setState({ jobs: this.state.oldJobs, map: false });
       if (currentViewMode === VIEW_MODE_EVERYBODY) return;
@@ -762,6 +769,7 @@ class TopNav extends React.Component {
   }
 
   showUnJobs () {
+    updateJobs();
     if (this.state.map) {
       this.setState({ jobs: this.state.oldJobs, map: false });
       if (currentViewMode === VIEW_MODE_UNASSIGNED) return;
@@ -887,6 +895,7 @@ ReactDOM.render(
   top_nav_anon,
   document.getElementById('root')
 );
+
 
 window.init = function () {
   initFetch(() => {
