@@ -92,7 +92,7 @@ class JobMap extends React.Component {
   componentDidMount() {
     // create map
     this.map = L.map("map", {
-      center: [49.8419, 24.0315],
+      center: [37.781715, -122.408324],
       zoom: 16,
       layers: [
         L.tileLayer('https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png', {
@@ -139,7 +139,7 @@ class JobMap extends React.Component {
         const pickicon = iconStyler(randomcolor);
 
         let popup = popupTemplate(job);
-        let pick = L.marker({ lat: job.destination_address.lat, lng: job.destination_address.lng }, { icon: pickicon }).addTo(board);
+        let pick = L.marker({ lat: job.destination_address.lat, lng: job.destination_address.lng }, { icon: pickicon, title: job.client.name }).addTo(board);
 
         const moneygreen = '#85bb65'
         const dropicon = iconStyler(moneygreen);

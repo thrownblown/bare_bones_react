@@ -161,45 +161,30 @@ class JobCard extends React.Component {
 
           <Collapse in={this.state.open}>
             <div id="example-collapse-text">
-              <strong>Assignment Status:</strong>{this.props.job.assignment_status}<br/>
-              <strong>Billing Reference:</strong>{this.props.job.billing_reference}<br/>
-              <strong>Client Name:</strong>{this.props.job.client.name}<br/>
-              <strong>Courier:</strong>{this.props.job.courier}<br/>
-              <strong>creation_method:</strong>{this.props.job.creation_method}<br/>
-              <strong>delivery_notes:</strong>{this.props.job.delivery_notes}<br/>
-              <strong>delivery_status:</strong>{this.props.job.delivery_status}<br/>
-              <strong>destination_address name:</strong>{this.props.job.destination_address.name}<br/>
-              <strong>destination_address street_address:</strong>{this.props.job.destination_address.street_address}<br/>
-              <strong>destination_address city:</strong>{this.props.job.destination_address.city}<br/>
-              <strong>destination_address state:</strong>{this.props.job.destination_address.state}<br/>
-              <strong>drop_timestamp:</strong>{this.props.job.drop_timestamp}<br/>
-              <strong>due_time:</strong>{this.props.job.due_time}<br/>
-              <strong>due_timestamp:</strong>{this.props.job.due_timestamp}<br/>
-              <strong>external_id:</strong>{this.props.job.external_id}<br/>
-              <strong>financial_info:</strong>{this.props.job.financial_info}<br/>
-              <strong>id:</strong>{this.props.job.id}<br/>
-              <strong>is_cancelled:</strong>{this.props.job.is_cancelled}<br/>
-              <strong>is_ready:</strong>{this.props.job.is_ready}<br/>
-              <strong>order_total:</strong>{this.props.job.order_total}<br/>
-              <strong>origin_address name:</strong>{this.props.job.origin_address.name}<br/>
-              <strong>origin_address street_address:</strong>{this.props.job.origin_address.street_address}<br/>
-              <strong>origin_address city:</strong>{this.props.job.origin_address.city}<br/>
-              <strong>origin_address state:</strong>{this.props.job.origin_address.state}<br/>
-              <strong>payment_method:</strong>{this.props.job.payment_method}<br/>
-              <strong>payment_method_as_string:</strong>{this.props.job.payment_method_as_string}<br/>
-              <strong>pick_timestamp:</strong>{this.props.job.pick_timestamp}<br/>
-              <strong>provider:</strong>{this.props.job.provider}<br/>
-              <strong>ready_due_times</strong>{this.props.job.ready_due_times}<br/>
-              <strong>ready_time:</strong>{this.props.job.ready_time}<br/>
-              <strong>ready_timestamp:</strong>{this.props.job.ready_timestamp}<br/>
-              <strong>requires_photo:</strong>{this.props.job.requires_photo}<br/>
-              <strong>requires_pod:</strong>{this.props.job.requires_pod}<br/>
-              <strong>requires_signed_pod:</strong>{this.props.job.requires_signed_pod}<br/>
-              <strong>service_price:</strong>{this.props.job.service_price}<br/>
-              <strong>special_instructions:</strong>{this.props.job.special_instructions}<br/>
-              <strong>status:</strong>{this.props.job.status}<br/>
-              <strong>status_as_string:</strong>{this.props.job.status_as_string}<br/>
-              <strong>tip:</strong>{this.props.job.tip}<br/>
+              <Row>
+                <Col sm={6} >
+                  <strong>TwinJet ID:</strong> {this.props.job.id}<br/>
+                  <strong>External ID:</strong> {this.props.job.external_id}<br/>
+                  <strong>Client Name:</strong> {this.props.job.client.name}<br/>
+                  <strong>Courier:</strong> {this.props.job.courier}<br/>
+                  <strong>Ready Time:</strong> {this.props.job.ready_timestamp ? moment(new Date(this.props.job.ready_timestamp)).format('M/D h:mm a') : 'None'}<br/>
+                  <strong>Due Time:</strong> {this.props.job.due_timestamp ? moment(new Date(this.props.job.due_timestamp)).format('M/D h:mm a') : 'None'}<br/>
+                  <strong>Pick Up Time:</strong> {this.props.job.pick_timestamp ? moment(new Date(this.props.job.pick_timestamp)).format('M/D h:mm a') : 'Nope'}<br/>
+                  <strong>Delivery Time:</strong> {this.props.job.drop_timestamp ? moment(new Date(this.props.job.drop_timestamp)).format('M/D h:mm a') : 'Nada'}<br/>
+                </Col>
+                <Col sm={6}>
+                  <strong>Special Instructions:</strong> {this.props.job.special_instructions}<br/>
+                  <strong>Status:</strong> {this.props.job.status_as_string}<br/>
+                  <strong>Cancelled:</strong> {this.props.job.is_cancelled ? 'Yes' : 'No'}<br/>
+                  <strong>Ready:</strong> {this.props.job.is_ready ? 'Yes' : 'No'}<br/>
+                  <strong>Photo Required:</strong>{ this.props.job.requires_photo ? 'Yes' : 'No' }<br/>
+                  <strong>POD Required:</strong> { this.props.job.requires_pod ? 'Yes' : 'No' }<br/>
+                  <strong>Delivery Fee:</strong> ${this.props.job.service_price}<br/>
+                  <strong>Tip:</strong> ${this.props.job.tip}<br/>
+                  <strong>Order Total:</strong> {this.props.job.order_total}<br/>
+                  <strong>Payment Method:</strong> {this.props.job.payment_method_as_string}<br/>
+                </Col>
+              </Row>
             </div>
           </Collapse>
         </Col>
