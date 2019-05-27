@@ -19,7 +19,7 @@ function iconStyler (color) {
     position: relative;
     border-radius: 2rem 2rem 0;
     transform: rotate(45deg);
-    border: 1px solid #FFFFFF`
+    border: 1px solid #FFFFFF`;
 
   const icon = L.divIcon({
     className: "my-custom-pin",
@@ -51,7 +51,7 @@ function popupTemplate (job) {
       ${job.destination_address.special_instructions}<br/>
     </div>
   </div>`
-    return popup;
+  return popup;
 }
 
 

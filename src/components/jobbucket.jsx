@@ -17,42 +17,22 @@ let boxStyle = {
           };
 
 
-class Board extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-  }
-
-  render() {
-    return (
+const Board = ({board, open}) => (
       <Container style={{ marginTop: '70px', marginBottom: '90px' }}>
-        { this.props.board.map((bucket) => {
-          return <JobBucket {...bucket} open={this.props.open} key={bucket.header_id}/>
+        { board.map((bucket) => {
+          return <JobBucket {...bucket} open={open} key={bucket.header_id}/>
         }) }
       </Container>
-    );
-  }
-}
+);
 
+const JobList = ({jobs}) => (
 
-class JobList extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-  }
-
-  renderJobCards () {
-    return this.props.jobs.map((jerb) => {
-        return <JobCard key={jerb.id} job={jerb} />
-      })
-  } 
-
-  render() {
-    return(
     <div>
-      {this.renderJobCards()}
+      { jobs.map((jerb) => {
+        return <JobCard key={jerb.id} job={jerb} />
+      })}
     </div>
-    )
-  }
-};
+);
 
 
 class JobBucket extends React.Component {
@@ -63,7 +43,7 @@ class JobBucket extends React.Component {
   }
   showDrop() { 
     this.setState({ open: !this.state.open });
-   }
+  }
   render() {
     let jobList = <JobList jobs={this.props.jobs}/>;
     return(

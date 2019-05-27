@@ -703,6 +703,7 @@ class TopNav extends React.Component {
     this.showAllJobs = this.showAllJobs.bind(this);
     this.showUnJobs = this.showUnJobs.bind(this);
     this.showMap = this.showMap.bind(this);
+    this.onSelect = this.onSelect.bind(this);
   }
 
   showMyJobs () {
@@ -813,6 +814,10 @@ class TopNav extends React.Component {
     }
   }
 
+  onSelect (b) {
+    console.log(b);
+  }
+
   render () {
     return (
       <div>
@@ -827,15 +832,15 @@ class TopNav extends React.Component {
               <img src={'static/' + tile} className='logo-image' width='31px' height='31px'/>
             </Navbar.Brand>
           </Nav>
-          <Nav variant='pills' className='ml-auto' activeKey={this.state.key}>
+          <Nav variant='pills' className='ml-auto' activeKey={this.state.key} >
             <Nav.Item>
-              <Nav.Link href='#mapjobs' onClick={this.showMap}>Map</Nav.Link>
+              <Nav.Link href='#mapjobs' onSelect={this.showMap}>Map</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href='#myjobs' onClick={this.showMyJobs}>My Jobs</Nav.Link>
+              <Nav.Link href='#myjobs' onSelect={this.showMyJobs}>My Jobs</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href='#alljobs' onClick={this.showAllJobs}>All Jobs</Nav.Link>
+              <Nav.Link href='#alljobs' onSelect={this.showAllJobs}>All Jobs</Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link href='#unassigned' onSelect={this.showUnJobs}>Unassigned</Nav.Link>
