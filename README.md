@@ -45,9 +45,3 @@ Now fire up the server
 > `node index.js`
 
 You now have a hot reloading, client side developoment environment able to communicate with your backend ExpressJS web server which mimics the production environment.   When both apps are running Express will pick up on your JS changes as the webpack development server builds them. 
-
-TO LEARN MORE ABOUT WEB DEVELOPMENT IN 2019
-
-Check out my latest course which goes into much more detail with extending React for production environments. 
-
-[Web Development in 2019](https://www.udemy.com/web-development-in-2019-from-start-to-finish/?couponCode=DISCOUNTBAREBONES)
